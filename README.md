@@ -1,38 +1,51 @@
-   RSL Type Checker
-   Copyright (C) 1998 UNU/IIST
+# RSL Type Checker source code
+
+Copyright (C) 1998 UNU/IIST
 
 The RSL type checker is available free for both PC and Unix platforms.
 
 See the LICENSE file for details of the license conditions.
 
-Binaries for Windows, Dos, Linux, and Solaris can be
-found in the appropriate sub-directory.
+See the README.orig for the original README file included in the distribution
+and explanation about the content of folders.
 
-There are self-installing executables in the Windows sub-directory,
-and an rpm file in the Linux sub-directory.
+This repository contains a copy of the source code of the RSL Type Checker
+implemented in [Gentle](http://gentle.compilertools.net/). The implementation is
+mainly located in the `src` folder.
 
-The user_guide directory contains a user guide in pdf, compressed
-postscript and html formats.
+## Dependencies
+- [Gentle](http://gentle.compilertools.net/)
+- gcc
 
-There is also a vcg directory containing the vcg graph drawing tool.
-There is a Windows versions (you need both zip files) and a tar file
-for building it for Unix or Linux.  You can use vcg to display the
-module dependencies of an RSL specification.
+## Compilation
+Simply run `make` to compile the source. This results in an executable `rsltc`
+in `src` folder.
 
-There is also a sml directory containing a zip file for Standard ML
-for Windows.  SML for other architectures can be obtained from
-http://cm.bell-labs.com/cm/cs/what/smlnj/.  Linux distributions
-typically have a smlnj package (and you will also need any
-libsmlnj-smlnj package).  rsltc includes a translator to SML.
+## Contribute
+### Students: 
+   Upon assigned a project, a branch will be created for your project.
+   You have full access for the branch and implement all your work on that
+   branch.
 
-There is a cpp directory containing the library files you need for
-compiling the output of the C++ translator.
+   *DO NOT commit changes to `master` branch, it is for stable code.*
 
-The latex directory contains files to help you generate LaTeX from RSL.
+### Others: 
+   You are welcome to fork the code and make pull requests.
 
-The UML2RSL directory contains a tool for generating RSL from UML
-class diagrams.
+### Workflow
+- Learn basic Git commands. E.g. try the following tutorials.
+  
+  [Git Documentation](http://git-scm.com/docs/gittutorial)
 
-If you want to build rsltc for yourself, to run on another
-architecture or to change it, you can find sources in the source
-directory.
+  [Atlassian's Git Tutorial](https://www.atlassian.com/git/tutorials/)
+
+- *Remember to always make a `pull` before you `push` your changes.*
+
+### FAQ
+
+Some common questions and answers are listed in the following. For any further
+questions, please contact the repository's owner.
+
+- Where is the source code?
+  
+  The source code are the `.g` files in the `src` folder.
