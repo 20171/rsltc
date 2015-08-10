@@ -1,0 +1,71 @@
+%1=map type
+%2=map non-nav constructor
+%3=map non-nav value accessor
+%4=map nav constructor
+%5=map nav-value accessor
+%6=domain type 
+%7=domain type non-nav constructor
+%8=domain type nav constructor
+%9=domain type nav-value accessor
+%10=rng type
+%11=rng type non-nav constructor
+%12=rng type nav constructor
+%13=rng type nav accessor
+%14=nav_invalid_map_application
+%15=domain-set type
+%16=domain-set type nav constructor
+%17=domain-set type nav value accessor
+%18=domain-set type operation context
+%19=bool operation context
+%20=range-set type
+%21=range-set non-nav constructor
+%22=range-set nav constructor
+%23=bool-non-nav constructor
+%24=domain-set type non-nav constructor
+%25=bool type
+%26=bool nav-constructor
+%27=non-lifted domain type
+%28=domain type non-nav accessor
+%29=rng type non-nav accessor
+%30=non-lifted range type
+%31=non-lifted maximal range type
+%32=non-lifted maximal domain type
+define(`__access', `access(i: `$6', a: `$1') : `$10' =
+  IF `$8'?(i)
+  THEN `$12'(`$9'(i))
+  ELSE
+    IF(`$4'?(a))
+    THEN `$12'(`$5'(a))
+    ELSE LET r: ARRAY `$27' OF `$30' = `$3'(a) 
+      IN 
+      LET i2 : `$27' = `$28'(i) IN `$11'(r[i2])
+    ENDIF
+  ENDIF;')
+
+define(`__set', `set(i: `$6', v: `$10', a: `$1') : `$1' =
+  IF `$8'?(i)
+  THEN `$4'(`$9'(i))
+  ELSE
+    IF `$12'?(v)
+    THEN `$4'(`$13'(v))
+    ELSE
+      IF `$4'?(a)
+      THEN `$4'(`$5'(a))
+      ELSE
+        LET i2 : `$27' = `$28'(i)
+          IN
+          `$2'([[i3 : `$27'] IF i2 = i3 
+THEN LET v2 : `$30' = `$29'(v) IN v2
+ELSE LET r : `$30' = `$29'(access(`$7'(i3),a)) IN r
+ENDIF
+])
+      ENDIF
+    ENDIF
+  ENDIF;')
+
+define(`__Generate_Array_CC_Ops',``$1' : CONTEXT =
+BEGIN
+  __access(`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11',`$12',`$13',`$14',`$15',`$16',`$17',`$18',`$19',`$20',`$21',`$22',`$23',`$24',`$25',`$26',`$27',`$28',`$29',`$30',`$31',`$32')
+  __set(`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11',`$12',`$13',`$14',`$15',`$16',`$17',`$18',`$19',`$20',`$21',`$22',`$23',`$24',`$25',`$26',`$27',`$28',`$29',`$30',`$31',`$32')
+
+END')

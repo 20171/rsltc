@@ -1,0 +1,72 @@
+define(`__and', `cc_and(e1: `$1', e2: `$1') : `$1' = 
+  IF `$3'?(e1) 
+  THEN e1
+  ELSE 
+    IF `$4'(e1) 
+    THEN e2
+    ELSE `$2'(FALSE)
+    ENDIF
+  ENDIF;')
+define(`__or', `cc_or(e1: `$1', e2: `$1') : `$1' = 
+  IF `$3'?(e1) 
+  THEN e1
+  ELSE 
+    IF `$4'(e1) 
+    THEN `$2'(TRUE)
+    ELSE e2
+    ENDIF
+  ENDIF;')
+define(`__implies', `cc_implies(e1: `$1', e2: `$1') : `$1' = 
+  IF `$3'?(e1) 
+  THEN e1
+  ELSE 
+    IF `$4'(e1) 
+    THEN e2
+    ELSE `$2'(TRUE)
+    ENDIF
+  ENDIF;')
+define(`__not', `cc_not(e1: `$1') : `$1' = 
+  IF `$3'?(e1) 
+  THEN e1
+  ELSE `$2'(NOT `$4'(e1))
+  ENDIF;')
+define(`__is_true', `is_true(e1: `$1') : BOOLEAN = 
+  IF `$3'?(e1) 
+  THEN FALSE
+  ELSE `$4'(e1)
+  ENDIF;')
+define(`__is_bool', `is_bool(e1: `$1') : BOOLEAN = 
+  IF `$3'?(e1) 
+  THEN FALSE
+  ELSE TRUE
+  ENDIF;')
+define(`__eq', `eq(e1: `$1', e2: `$1') : `$1' = 
+  IF `$3'?(e1) 
+  THEN e1
+  ELSE 
+    IF `$3?'(e2) 
+    THEN e2
+    ELSE `$2'(`$4'(e1) = `$4'(e2))
+    ENDIF
+  ENDIF;')
+define(`__neq', `neq(e1: `$1', e2: `$1') : `$1' = 
+  IF `$3'?(e1) 
+  THEN e1
+  ELSE 
+    IF `$3?'(e2) 
+    THEN e2
+    ELSE `$2'(`$4'(e1) /= `$4'(e2))
+    ENDIF
+  ENDIF;')
+define(`__Generate_Bool_CC_Ops',``$1' : CONTEXT =
+BEGIN
+  __and(`$2', `$3', `$4', `$5')  
+  __or(`$2', `$3', `$4', `$5')  
+  __implies(`$2', `$3', `$4', `$5')  
+  __not(`$2', `$3', `$4', `$5')  
+  __is_true(`$2', `$3', `$4', `$5')
+  __is_bool(`$2', `$3', `$4', `$5')
+  __eq(`$2', `$3', `$4', `$5')
+  __neq(`$2', `$3', `$4', `$5')
+END')
+

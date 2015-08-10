@@ -1,0 +1,155 @@
+%1=set type
+%2=set's lifted elem type
+%3=set's contructor
+%4=set's nav-constructor
+%5=set non-nav accessor
+%6=set nav-value accesor
+%7=elem's type nav-constructor
+%8=elem's type nav-value-accessor
+%9=Bool_cc type
+%10=Bool_cc non-nav constructor
+%11=Bool_cc nav constructor
+%12=Bool_cc non-nav accesor
+%13=elem's non-nav accessor
+%14=non-lifted elem type
+
+define(`__empty_set', `empty_set : `$1' = 
+    `$3'(LAMBDA (e : `$14') : FALSE);')
+define(`__add', `add(e : `$2', aset : `$1') : `$1' =
+  IF `$4'?(aset)
+  THEN aset
+  ELSE
+    IF `$7'?(e)
+    THEN `$4'(`$8'(e))
+    ELSE `$3'(LAMBDA (e1 : `$14') : `$13'(e) = e1 OR `$5'(aset)(e1))
+    ENDIF
+  ENDIF;')
+define(`__contains', `isin(e : `$2', aset : `$1' ) : `$9' =
+  IF `$4'?(aset)
+  THEN `$11'(`$6'(aset))
+  ELSE
+    IF `$7'?(e)
+    THEN `$11'(`$8'(e))
+    ELSE `$10'(`$5'(aset)(`$13'(e)))
+    ENDIF
+  ENDIF;')
+define(`__not_belongs', `not_isin(e : `$2', aset : `$1' ) : `$9' = 
+  IF `$4'?(aset)
+  THEN `$11'(`$6'(aset))
+  ELSE
+    IF `$7'?(e)
+    THEN `$11'(`$8'(e))
+    ELSE `$10'(NOT `$5'(aset)(`$13'(e)))
+    ENDIF
+  ENDIF;')
+define(`__union', `union(aset1 : `$1', aset2 : `$1' ) : `$1' =
+  IF `$4'?(aset1)
+  THEN aset1
+  ELSE
+    IF `$4'?(aset2)
+    THEN aset2
+    ELSE `$3'(LAMBDA (e : `$14') : `$5'(aset1)(e) OR `$5'(aset2)(e))
+    ENDIF
+  ENDIF;')
+define(`__intersection', `intersection(aset1 : `$1', aset2 : `$1' ) : `$1' =
+  IF `$4'?(aset1)
+  THEN aset1
+  ELSE
+    IF `$4'?(aset2)
+    THEN aset2
+    ELSE `$3'(LAMBDA (e : `$14') : `$5'(aset1)(e) AND `$5'(aset2)(e))
+    ENDIF
+  ENDIF;')
+define(`__difference', `difference(aset1 : `$1', aset2 : `$1' ) : `$1' =
+  IF `$4'?(aset1)
+  THEN aset1
+  ELSE
+    IF `$4'?(aset2)
+    THEN aset2
+    ELSE `$3'(LAMBDA (e : `$14') : `$5'(aset1)(e) AND NOT `$5'(aset2)(e))
+    ENDIF
+  ENDIF;')
+define(`__subset', `subset?(aset1 : `$1', aset2 : `$1' ) : `$9' = 
+  IF `$4'?(aset1)
+  THEN `$11'(`$6'(aset1))
+  ELSE
+    IF `$4'?(aset2)
+    THEN `$11'(`$6'(aset2))
+    ELSE `$10'(FORALL (e : `$14') : `$5'(aset1)(e) => `$5'(aset2)(e))
+    ENDIF
+  ENDIF;')
+define(`__p_subset', `strict_subset?(aset1 : `$1', aset2 : `$1' ) : `$9' = 
+  IF `$4'?(aset1)
+  THEN `$11'(`$6'(aset1))
+  ELSE
+    IF `$4'?(aset2)
+    THEN `$11'(`$6'(aset2))
+    ELSE `$10'((FORALL (e : `$14') : `$5'(aset1)(e) => `$5'(aset2)(e)) AND
+                (EXISTS (e1 : `$14') : `$5'(aset1)(e1) AND NOT `$5'(aset2)(e1)))
+    ENDIF
+  ENDIF;')
+define(`__supset', `supset?(aset2 : `$1', aset1 : `$1' ) : `$9' = 
+  IF `$4'?(aset1)
+  THEN `$11'(`$6'(aset1))
+  ELSE
+    IF `$4'?(aset2)
+    THEN `$11'(`$6'(aset2))
+    ELSE `$10'(FORALL (e : `$14') : `$5'(aset1)(e) => `$5'(aset2)(e))
+    ENDIF
+  ENDIF;')
+define(`__p_supset', `strict_supset?(aset2 : `$1', aset1 : `$1' ) : `$9' = 
+  IF `$4'?(aset1)
+  THEN `$11'(`$6'(aset1))
+  ELSE
+    IF `$4'?(aset2)
+    THEN `$11'(`$6'(aset2))
+    ELSE `$10'((FORALL (e : `$14') : `$5'(aset1)(e) => `$5'(aset2)(e)) AND
+                (EXISTS (e1 : `$14') : `$5'(aset1)(e1) AND NOT `$5'(aset2)(e1)))
+    ENDIF
+  ENDIF;')
+define(`__eq', `eq(aset1 : `$1', aset2 : `$1' ) : `$9' =
+  IF `$4'?(aset1)
+  THEN `$11'(`$6'(aset1))
+  ELSE
+    IF `$4'?(aset2)
+    THEN `$11'(`$6'(aset2))
+    ELSE `$10'(aset1 = aset2)
+    ENDIF
+  ENDIF;')
+define(`__neq', `neq(aset1 : `$1', aset2 : `$1' ) : `$9' =
+  IF `$4'?(aset1)
+  THEN `$11'(`$6'(aset1))
+  ELSE
+    IF `$4'?(aset2)
+    THEN `$11'(`$6'(aset2))
+    ELSE `$10'(aset1 /= aset2)
+    ENDIF
+  ENDIF;')
+define(`__Generate_CC_Set_Ops',``$1' : CONTEXT =
+BEGIN
+  __empty_set(`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11',`$12',`$13',`$14',`$15')
+
+  __add(`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11',`$12',`$13',`$14',`$15')
+
+  __contains(`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11',`$12',`$13',`$14',`$15')
+
+  __not_belongs(`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11',`$12',`$13',`$14',`$15')
+
+  __union(`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11',`$12',`$13',`$14',`$15')
+
+  __intersection(`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11',`$12',`$13',`$14',`$15')
+
+  __difference(`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11',`$12',`$13',`$14',`$15')
+
+  __subset(`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11',`$12',`$13',`$14',`$15')
+
+  __p_subset(`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11',`$12',`$13',`$14',`$15')
+
+  __supset(`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11',`$12',`$13',`$14',`$15')
+
+  __p_supset(`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11',`$12',`$13',`$14',`$15')
+
+  __eq(`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11',`$12',`$13',`$14',`$15')
+
+  __neq(`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11',`$12',`$13',`$14',`$15')
+END')

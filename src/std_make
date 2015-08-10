@@ -1,0 +1,133 @@
+# standard makefile for RSL type checker
+# intended to be input by makefile for specific architecture,
+# directories and tools
+#
+# 5 February 1998, raise@iist.unu.edu
+
+# source files
+
+TOKENS = filename.t eofile.t nextunit.t char_lit.t id.t int_lit.t real_lit.t text_lit.t
+GENTLE_C = ast.c env.c ext.c print.c grammar.c objects.c types.c\
+values.c cc.c pp.c cpp.c c_ast.c c_unparse.c c_decl.c sml.c\
+pvs_ast.c pvs_aux.c pvs_col_sort.c pvs_gen_ast.c pvs_gen_code.c pvs.c\
+sal_print.c sal_ast.c sal_global_vars.c sal_decl_sort.c sal_aux.c sal_cc_aux.c\
+sal_gen_ast.c sal_type_fixed_point.c sal_gen_code_aux.c \
+sal_gen_code_types.c sal_gen_code_bindings.c sal_gen_code.c sal.c\
+fdr.c fdr_ast.c fdr_gen_ast.c fdr_gen_code.c ltl_trans_delta.c\
+ltl_out.c
+
+
+
+GENTLE_O = $(GENTLE_C:%.c=%.o)
+C_O = errmsg.o files.o idents.o strings.o ccgen.o main.o pos.o
+OBJECTS = $(GENTLE_O) $(GEN_TAB).o $(LEX_YY).o $(C_O) $(GRTS)
+
+# rules
+
+all: redate $(PGM)
+
+redate:
+	$(RM_CMD) main.o
+
+
+$(PGM): $(OBJECTS)
+	$(CC) $(LDFLAGS) -o $(PGM) $(OBJECTS)
+
+files.o:
+	$(CC) $(CFLAGS) $(FILES_FLAGS) -c files.c
+
+%.c : %.g
+	$(GENTLE) $<
+
+gen.l: $(TOKENS) $(BLOCKS) grammar.c
+	$(REFLEX)
+
+$(LEX_YY).c: gen.l
+	$(LEX) gen.l
+
+$(GEN_TAB).c: grammar.c
+	$(YACC) gen.y
+
+$(BLOCKS):
+	ln -s comments.b COMMENTS.b
+	ln -s lexdef.b LEXDEF.b
+	ln -s lexfunc.b LEXFUNC.b
+	ln -s litblock.b LITBLOCK.b
+
+clean:
+	$(RM_CMD) *.o
+	$(RM_CMD) ast.c
+	$(RM_CMD) env.c
+	$(RM_CMD) ext.c
+	$(RM_CMD) print.c
+	$(RM_CMD) grammar.c
+	$(RM_CMD) objects.c
+	$(RM_CMD) types.c
+	$(RM_CMD) values.c
+	$(RM_CMD) cc.c
+	$(RM_CMD) pp.c
+	$(RM_CMD) cpp.c
+	$(RM_CMD) c_ast.c
+	$(RM_CMD) c_unparse.c
+	$(RM_CMD) c_decl.c
+	$(RM_CMD) sml.c
+	$(RM_CMD) pvs*.c
+	$(RM_CMD) fdr*.c
+	$(RM_CMD) gen.*
+	$(RM_CMD) $(LEX_YY).c
+	$(RM_CMD) sal*.c
+	$(RM_CMD) ltl_trans_delta.c
+	$(RM_CMD) ltl_out.c
+
+# dependencies
+
+ast.o: ast.c
+env.o: env.c
+ext.o: ext.c
+print.o: print.c
+grammar.o: grammar.c
+objects.o: objects.c
+types.o: types.c
+values.o: values.c
+cc.o: cc.c
+pp.o: pp.c
+cpp.o: cpp.c
+c_ast.o: c_ast.c
+c_unparse.o: c_unparse.c
+c_decl.o: c_decl.c
+sml.o: sml.c
+fdr.o: fdr.c
+fdr_ast.o: fdr_ast.c
+fdr_gen_ast.o: fdr_gen_ast.c
+fdr_gen_code.o: fdr_gen_code.c
+pvs_ast.o: pvs_ast.c
+pvs_aux.o: pvs_aux.c
+pvs_col_sort.o: pvs_col_sort.c
+pvs_gen_ast.o: pvs_gen_ast.c
+pvs_gen_code.o: pvs_gen_code.c
+pvs.o: pvs.c
+sal_ast.o: sal_ast.c
+sal_decl_sort.o: sal_decl_sort.c
+sal_aux.o: sal_aux.c
+sal_gen_ast.o: sal_gen_ast.c
+sal_type_fixed_point.o: sal_type_fixed_point.c
+sal_gen_code_aux.o: sal_gen_code_aux.c
+sal_gen_code_types.o: sal_gen_code_types.c
+sal_gen_code_bindings.o: sal_gen_code_bindings.c
+sal_gen_code.o: sal_gen_code.c
+sal_global_vars.o: sal_global_vars.c
+sal_print.o: sal_print.c
+sal.o: sal.c
+sal_cc_aux.o: sal_cc_aux.c 
+ltl_trans_delta.o: ltl_trans_delta.c
+ltl_out.o: ltl_out.c
+
+errmsg.o: errmsg.c errmsg.h idents.h files.h pos.h
+files.o: files.c files.h idents.h errmsg.h pos.h
+idents.o: idents.c idents.h
+strings.o: strings.c
+pos.o: pos.c pos.h files.h idents.h errmsg.h
+ccgen.o: ccgen.c
+main.o: main.c files.h idents.h errmsg.h
+
+

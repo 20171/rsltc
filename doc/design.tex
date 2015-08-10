@@ -1,0 +1,221 @@
+\documentclass[a4paper]{article}
+\usepackage{a4wide}
+\usepackage{latexsym, rslenv}
+
+\title{RSL Type checker Version 1.1\\Design notes}
+\author{Chris George, UNU/IIST}
+\date{22 May 1998}
+\begin{document}
+\maketitle
+
+
+\section{Introduction}
+\label{sec:introduction}
+
+This document provides some basic notes on the design of the RSL Type
+Checker, intended to be of use to people interested in extending the
+tool.
+
+
+\section{Environment}
+\label{sec:environment}
+
+The static environment acts like a kind of structured symbol table.
+There is a class environment (CLASS\_ENV) for each class expression.
+
+For a basic class expression this has 8 components:
+\begin{enumerate}
+\item types
+\item values
+\item variables
+\item channels
+\item modules
+\item axioms
+\item with
+\item adapts
+\end{enumerate}
+
+The first 6 hold information about entities of each kind declared in
+the class expression.  (The 5th is called modules and capable of
+holding schemes as well as objects, although schemes within class
+expressions are not allowed.  The same structure is used for the
+global environment, where schemes may occur.)
+
+The 7th holds information about with clauses as a list of object
+expressions.  With clauses are inherited by inner environments by
+being copied when they are created.
+
+The 8th is formed from renamings and hides.  Only Id\_or\_ops are
+recorded as disambiguations on hides and renamings are ignored.
+
+Except for axioms, There is an entity\_id (Type\_id, etc.) for each
+entity.  These are effectively references into a table for each kind
+of entity.  These tables hold additional information about the entity,
+such as its identifier and its type or class.  The environment
+component is just a list of the entity\_ids of each kind defined in
+the class.  For axioms we just use a list of identifiers, the axiom
+names, as there is no additional information to keep about axioms.
+
+There is therefore eventually an entity\_id for each declared entity
+and in many cases we \emph{normalise} applied occurrences of names
+into references to their entity\_ids --- so that we don't have to keep
+searching for them.  Such searching is called \emph{lookup}.  
+
+For example, for type expressions, there is in the abstract syntax
+both named\_type, which is a NAME, and defined\_type which is a
+Type\_id.  Normalising a type converts the former into the latter.
+There is also both a function type and a normalised version fun in which
+accesses are normalised.  
+
+Normalising is not currently done for value names --- this may have to
+be added later for some extensions.
+
+Apart from values, each of the first six environments is just a list
+of entity\_ids.  For values, we have inner environments caused by the
+declarations in quantifiers, let expressions etc.\ and so we need a
+list of lists (where the inner lists are used as stacks, innermost
+scope at the top).
+
+No attempt is currently made to make environments more efficiently searched by
+making them ordered (by their identifiers), or by using ordered trees
+instead of lists. 
+
+As well as the basic environment there is an extend environment for
+dealing with extending class expressions.  (All others become basic
+environments.)  These are needed because the two components of an
+extend may have different withs and adapts, and because names
+occurring in the second class of an extend may be defined in the
+first, but not vice versa.  
+
+Associated with an environment is a PATH to keep track of where we are
+in extending class expressions.  This is just a list of ``left'' and
+``right''.  For example, if we are dealing with the class
+expression
+
+\kw{extend} \kw{extend} CE1 \kw{with} \kw{extend} CE2 \kw{with} CE3 \kw{with} CE4
+
+then the paths in force when we are dealing with each of the
+constituent class expressions will be as follows
+
+\begin{tabbing}
+  CE1 \= left(left(nil)) \\
+  CE2 \> left(right(left(nil))) \\
+  CE3 \> left(right(right(nil))) \\
+  CE4 \> right(nil) 
+\end{tabbing}
+
+\subsection{Current environment}
+\label{sec:current_env}
+
+The current environment is held in the global variable ``Current''.
+It is a list (stack) of environments.  The stack reflects nesting of
+environments caused by object definitions and local expressions.  The
+innermost environment is at the top of the stack (front of the list).
+
+There is also a stack of PATHs held in the global variable
+``Extend\_paths''.  It is important that Current and Extend\_paths
+always have the same depth.
+
+\subsection{Global environment}
+
+The context of the module being checked is stored in the global
+variable ``Globals''.  It has the same structure as the modules
+component of a class environment.
+
+\subsection{Formal scheme parameters}
+
+When checking a parameterised scheme the global variable
+``Parameters'' holds the formal parameters, again a module environment
+although only objects will appear in it.
+
+
+\section{Type checking algorithm}
+\label{sec:algorithm}
+
+The overall algorithm for checking the ``top level'' module is
+\begin{enumerate}
+\item Check the context modules and store their environments in
+  Globals.
+\item (For a parameterised scheme) check the formal parameters and store their environments in
+  Parameters.
+\item Check the body
+\end{enumerate}
+
+In each case ``Check'' means, after parsing and creating the abstract
+syntax tree, do four passes.
+\begin{enumerate}
+\item Create the class environment structure and the entity\_ids for object,
+  type, variable and channel definitions.  
+\item Complete the type environment by normalising abbreviation types
+  and storing them in the Type\_ids.
+\item Add the value environment, with normalised types.  Also adds
+  types to variable\_ids and channel\_ids, and adds the axiom
+  environment.  Also adds value definitions implicit in variant,
+  record and union types.
+\item Type check value expressions
+\end{enumerate}
+
+Multiple passes are due to the lack of a ``define before use'' rule in
+RSL.  We need first to establish a type and object environment, which
+takes two passes, and then two more to establish value types and
+accesses and then do type-checking.
+
+
+\section{Looking up names}
+\label{sec:lookup}
+
+There are separate functions for objects, types, values, variables and
+channels but they all follow the same pattern.  (I think it would need
+parametric polymorphism in Gentle, or the use of only one kind of
+entity\_id, to use the same code for them.)  The strategy is
+
+\begin{enumerate}
+\item Lookup name in current environment, moving if necessary left through current
+  path (for extend) and then looking in outer scopes.
+\item For each environment, if we came from outside the environment
+  (e.g.\ we are looking in the environment of X for a name X.N) we
+  have to adapt the name according to the adapts of that
+  environment).  The parameter of type OWNENV is used to indicate
+  looking from inside (ownenv) or from outside (nil).
+\item For each environment we have to generate a set of possible names
+  if there are with clauses.  E.g.\ in \kw{with} A \kw{with} B ... we
+  need to look for N, A.N, B.N and A.B.N
+\item For a qualified name X.N we have to obtain the environment of X
+  and then lookup N within it.
+\item For objects (and this includes the qualifiers of qualified
+  names), if the object or qualifier is not defined in the current
+  environment we normally move out to the enclosing environment.  But
+  if the current environment is the result of unfolding a scheme
+  instantiation we must ``fit'' the object name using the fitting
+  found in the current environment.  This relates formal to actual
+  parameters (including fittings) when we are checking a scheme
+  instantiation.  E.g.\ if we are looking for X.N and we find X is a
+  formal parameter for which the corresponding actual parameter is
+  \mbox{A{\LBRACE}N{\PRIM} \kw{for} N{\RBRACE}} then we need to lookup
+  A.N{\PRIM}.  If X is not a formal parameter (i.e.\ is not found in
+  the fitting), then we next look in the global environment, since this
+  is the only place an object name occurring in a scheme but not
+  defined inside it or in its formal parameters could have been
+  defined.
+\end{enumerate}
+
+For objects, types, variables and channels we use the first we find
+(as inner scopes hide outer ones).  For values, as we have
+overloading, we search completely and collect a set of possible types.
+
+\section{Known shortcomings}
+\label{sec:shortcomings}
+
+\begin{enumerate}
+  \item Objects used as qualifiers in type expressions are not type
+    checked.  This needs to be done as part of the final pass, since
+    it depends on the value environment.
+  \item Subtypes need to be checked after the value enviroment is
+    created.  This is done with Gentle's sweep facility, which will
+    fail if there are local expressions within a subtype.  Strange but
+    possible!
+  \item Check\_type\_defined is used to normalise types in some places
+    during type checking.  This can duplicate error messages.
+
+\end{enumerate}
+\end{document}

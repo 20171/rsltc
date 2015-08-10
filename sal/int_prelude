@@ -1,0 +1,19 @@
+define(`__modulo', `modulo(e1: `$1', e2: `$1') : `$1' = 
+  IF (e1 >= 0)
+  THEN
+    IF (e2 >= 0)
+    THEN e1 MOD e2
+    ELSE -(e1 MOD (-e2))
+    ENDIF
+  ELSE
+    IF (e2 >= 0)
+    THEN -(e1 MOD (-e2))
+    ELSE (-e1) MOD (-e2)
+    ENDIF
+  ENDIF;')
+
+define(`__Generate_Int_Ops',``$1' : CONTEXT =
+BEGIN
+  __modulo(`$2')
+END')
+

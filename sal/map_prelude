@@ -1,0 +1,63 @@
+define(`__mk_map', `mk_map(d: `$3', e: `$8') : `$2' = 
+    LAMBDA (d1: `$3') : 
+        IF (d1 = d) 
+        THEN `$5'(e) 
+        ELSE `$4' 
+	ENDIF;')
+define(`__empty_map', `empty_map : `$2' = 
+    LAMBDA (e : `$3') : `$4';')
+define(`__add', `add(e : `$3', r : `$8', m : `$2') : `$2' = 
+    LAMBDA (d1: `$3') : 
+        IF (d1 = e) 
+        THEN `$5'(r) 
+        ELSE m(d1)
+	ENDIF;')
+define(`__override', `override(m1, m2: `$2') : `$2' = 
+    LAMBDA (e : `$3') :
+        IF (m2(e) /= `$4') 
+        THEN m2(e)
+        ELSE m1(e)
+        ENDIF;')
+define(`__union', `union(m1, m2: `$2') : `$2' = 
+      LAMBDA (e : `$3') :
+        IF (m2(e) /= `$4') 
+        THEN m2(e)
+        ELSE m1(e)
+        ENDIF;')
+define(`__restriction_by', `restriction_by(m : `$2', s : `$9') : `$2' = 
+      LAMBDA (e:`$3') :
+        IF (`$6'!isin(e,s)) 
+        THEN `$4'
+        ELSE m(e)
+        ENDIF;')
+define(`__restriction_to', `restriction_to(m : `$2', s : `$9') : `$2' = 
+      LAMBDA (e:`$3') :
+        IF (`$6'!isin(e,s)) 
+	THEN m(e)
+	ELSE `$4'
+	ENDIF;')
+define(`__dom', `dom(m: `$2') : `$9' = 
+    LAMBDA (e : `$3') : m(e) /= `$4';')
+define(`__rng', `rng(m : `$2') : `$10' = 
+    LAMBDA (e: `$8'):
+	   (EXISTS (r: `$3') : 
+		      m(r) /= `$4' AND 
+		      `$11'(m(r)) = e);')
+define(`__isin', `isin(e : `$3', m : `$2') : BOOLEAN =
+    m(e) /= `$4';')
+define(`__not_isin', `not_isin(e : `$3', m : `$2') : BOOLEAN =
+    m(e) = `$4';')
+define(`__Generate_Map_Ops',``$1' : CONTEXT =
+BEGIN
+  __mk_map(`$1',`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11')
+  __empty_map(`$1',`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11')
+  __add(`$1',`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11')
+  __override(`$1',`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11')
+  __union(`$1',`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11')
+  __restriction_by(`$1',`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11')
+  __restriction_to(`$1',`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11')
+  __dom(`$1',`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11')
+  __rng(`$1',`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11')
+  __isin(`$1',`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11')
+  __not_isin(`$1',`$2',`$3',`$4',`$5',`$6',`$7',`$8',`$9',`$10',`$11')
+END')

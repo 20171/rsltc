@@ -1,0 +1,59 @@
+define(`__mk_set', `mk_set(e: `$2') : `$1' = 
+    LAMBDA (e1 : `$2') : (e1 = e);')
+define(`__empty_set', `empty_set : `$1' = 
+    LAMBDA (e : `$2') : FALSE;')
+define(`__add', `add(e : `$2', aset : `$1') : `$1' = 
+    LAMBDA (e1 : `$2') : e = e1 OR aset(e1);')
+define(`__contains', `isin(e : `$2', 
+	    aset : `$1' ) : BOOLEAN = 
+    aset(e);')
+define(`__not_belongs', ` not_isin(e : `$2', 
+	      aset : `$1' ) : BOOLEAN = 
+    NOT aset(e);')
+define(`__union', `union(aset1 : `$1', 
+	aset2 : `$1' ) : `$1' =
+    LAMBDA (e : `$2') : aset1(e) OR aset2(e);')
+define(`__intersection', `intersection(aset1 : `$1', 
+	       aset2 : `$1' ) : `$1' =
+    LAMBDA (e : `$2') : aset1(e) AND aset2(e);')
+define(`__difference', `difference(aset1 : `$1', 
+             aset2 : `$1' ) : `$1' =
+    LAMBDA (e : `$2') : aset1(e) AND NOT aset2(e);')
+define(`__subset', `subset?(aset1 : `$1', aset2 : `$1' ) : BOOLEAN = 
+    (FORALL (e : `$2') : aset1(e) => aset2(e));')
+define(`__p_subset', `strict_subset?(aset1 : `$1', 
+	    aset2 : `$1' ) : BOOLEAN = 
+    ((FORALL (e : `$2') : aset1(e) => aset2(e)) AND 
+                (EXISTS (e : `$2') : aset2(e) AND NOT aset1(e)));')
+define(`__supset', `supset?(aset2 : `$1', aset1 : `$1' ) : BOOLEAN = 
+    (FORALL (e : `$2') : aset1(e) => aset2(e));')
+define(`__p_supset', `strict_supset?(aset2 : `$1', 
+	    aset1 : `$1' ) : BOOLEAN = 
+    ((FORALL (e : `$2') : aset1(e) => aset2(e)) AND 
+                (EXISTS (e : `$2') : aset2(e) AND NOT aset1(e)));')
+define(`__Generate_Set_Ops',``$1' : CONTEXT =
+BEGIN
+  __mk_set(`$2',`$3')
+
+  __empty_set(`$2',`$3')
+
+  __add(`$2',`$3')
+
+  __contains(`$2',`$3')
+
+  __not_belongs(`$2',`$3')
+
+  __union(`$2',`$3')
+
+  __intersection(`$2',`$3')
+
+  __difference(`$2',`$3')
+
+  __subset(`$2',`$3')
+
+  __p_subset(`$2',`$3')
+
+  __supset(`$2',`$3')
+
+  __p_supset(`$2',`$3')
+END')

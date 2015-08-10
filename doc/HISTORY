@@ -1,0 +1,58 @@
+   RSL Type Checker
+   Copyright (C) 1998 UNU/IIST
+
+Version 1.0 February 1998 
+
+The first version
+
+Version 1.1 May 1998
+
+- Scheme applications are only type checked once (on loading).
+  Previously each instantiation was fully checked. The tool now uses
+  less memory.
+
+- The search path for object names occurring in scheme instantiations
+  is corrected
+
+- A -t option for type checking TRSL is added.  (This leaves a slight
+  problem in that "wait" is accepted syntactically in RSL as a prefix
+  operator.) 
+
+- The with construct now takes a list of object expressions instead of
+  a single one.
+
+Version 1.2 March 1999
+
+- Confidence condition generation added, thanks to Tan Xinming of
+  Wuhan Transportation University
+
+- Pretty printing added, thanks to He Hua of Peking University
+
+- Module dependency option added
+
+Version 2.0 February 2001
+
+- SML translator added, thanks to Ke Wei of the Chinese Academy of
+  Sciences, Beijing, China.
+
+- C++ translator added, thanks to Univan Ahn of Kim Il Sung University
+  of Pyongyang, DPR Korea. 
+
+Version 2.3 May 2003
+
+- PVS translator added, thanks to Aristides Dasso of the University of
+  San Luis, San Luis, Argentina.
+
+Version 2.4 May 2004
+
+- UML2RSL translator added, thanks to Ana Funes of the University of
+  San Luis, San Luis, Argentina.
+
+Version 2.5 December 2004
+
+- Support for mutation testing and test coverage added.
+
+Version 2.6 October 2013
+
+- Added check for accesses in function application: argument type must be subtype of parameter type.
+

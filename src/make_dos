@@ -1,0 +1,24 @@
+# DOS makefile for RSL type checker
+#
+# 5 February 1998, raise@iist.unu.edu
+
+GENTLE_DIR =      -- where Gentle is installed
+VERSION_NUM = "\"2.6\""
+MAKE_DATE = "\"$(shell date)\""
+GENTLE = $(GENTLE_DIR)\\gentle\\gentle
+GRTS = $(GENTLE_DIR)\\gentle\\grts.o
+REFLEX = $(GENTLE_DIR)\\reflex\\reflex
+LEX_YY = lexyy
+GEN_TAB = gen_tab
+LEX = flex
+YACC = bison
+CC = gcc -m32
+RM_CMD = del
+PGM = rsltc.exe
+CFLAGS =
+LDFLAGS = -s
+FILES_FLAGS = -D_MAX_PATH=512 -D_DOS
+CFLAGS = -D RSLTC_MAKE_DATE=${MAKE_DATE} -D RSLTC_VERSION=${VERSION_NUM}
+BLOCKS = comments.b lexdef.b lexfunc.b litblock.b
+
+include std_make

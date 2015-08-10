@@ -1,0 +1,119 @@
+% Copyright Linh Vu Hong - lvho@dtu.dk
+% Modified the work of Brian Christensen in listings packages
+% Fixed issues with diplaying all, exists operators
+\ProvidesPackage{rsllisting}
+\RequirePackage{listings}
+\RequirePackage{latexsym}
+\lstdefinelanguage{RSL}%
+  {morekeywords={Bool,Char,devt_relation,Int,Nat,Real,Text,Unit,abs,any,%
+      as,axiom,card,case,channel,chaos,class,do,dom,elems,else,elsif,end,%
+      extend,false,for,hd,hide,if,in,inds,initialise,int,len,let,local,%
+      object,of,out,post,pre,read,real,rng,scheme,skip,stop,swap,%
+      test_case,theory,then,tl,true,type,until,use,value,variable,while,%
+      with,write},%
+      basicstyle=\rmfamily,
+      commentstyle=\rmfamily,
+      columns=[c]flexible,
+      keepspaces=true,
+literate=*%
+{<}{$<$}{1}%
+{>}{$>$}{1}%
+{[}{$[$}{1}%%
+{]}{$]$}{1}%%
+{^}{{\mbox{$\widehat{\;}$}}}{1}%%
+{'}{{\raisebox{1ex}[1ex][0ex]{\protect\scriptsize$\prime$}}}{1}%%
+{||}{{\mbox{$\parallel$}}}{2}%%
+{|-}{$\vdash$}{1}%%
+{|=|}{{\mbox{$\lceil\!\rceil\!\!\!\!\!\!\;\lfloor\!\rfloor$}}}{1}%%
+{**}{$\uparrow$}{1}%
+{/\\}{$\wedge$}{1}%%
+{\ inter\^^M}{{}}{0 $\;\cap$ \newline}%%
+{\ inter\ }{$\;\cap\;$}{3}%%
+{-\\}{$\lambda$}{1}%%
+{->}{$\rightarrow$}{1}%%
+{-m->}{{\mbox{$\:\rightarrow \!\!\!\!\!\!\!\!\!{\mbox{ }_{m}}\;$}}}{1}%
+{-~m->}{{\mbox{$\stackrel{\sim}{\mbox{$\rightarrow\hspace{-2.5\lst@width} _{m}\;$}}$}}}{1}%
+{-~->}{{\mbox{$\stackrel{\sim}{\rightarrow}$}}}{1}%%
+{-set}{\bf{-set}}{4}%%
+{-list}{{$^{\ast}$}}{1}%%
+{-inflist}{{$^{\omega}$}}{1}%
+{-infset}{{\mbox{{\bf -infset}}}}{7}%
+{\#}{$\circ$}{1}%
+{:-}{{\raisebox{.4ex}{\tiny $\bullet$}}}{1}%%
+{=}{$=$}{1}%%
+{==}{$==$}{2}%%
+{=>}{$\Rightarrow$}{1}%%
+{\ is\^^M}{{}}{0 $\;\equiv$ \newline }%
+{\ is\ }{{$\;\equiv\;$}}{3}%%
+{\ isin\^^M}{}{0 $\;\;\in$ \newline}%%
+{\ isin\ }{$\;\in\;$}{3}%%
+{~}{$\sim$}{1}%%
+{~=}{$\neq$}{1}%%
+{\ ~isin\^^M}{{}}{0 $\;\notin\;$ \newline}%%
+{\ ~isin\ }{$\;\notin\;$}{3}%%
+{+>}{$\mapsto$}{1}%%
+{++}{}{1}%
+{|^|}{{\mbox{$\lceil\!\rceil$}}}{1}%%
+{\\/}{$\vee$}{1}%%
+{(exists\^^M}{{}}{0 $(\exists$ \newline}%%
+{(exists\ }{$(\exists$}{2}%%
+{\ exists\^^M}{{}}{0 $\;\exists$ \newline}%%
+{\ exists\ }{$\;\exists$}{2}%%
+{\ union\^^M}{{}}{0 $\;\cup$ \newline}%%
+{\ union\ }{$\;\cup\;$}{3}%%
+{>=}{$\geq$}{1}%%
+{><}{$\times$}{1}%%
+{>>}{$\supset$}{1}%
+{>>=}{$\supseteq$}{1}%%
+{<=}{$\leq$}{1}%%
+{<<}{$\subset$}{1}%
+{<.}{$\langle$}{1}%%
+{<<=}{$\subseteq$}{1}%%
+{<->}{$\leftrightarrow$}{1}%%
+{[=}{$\sqsubseteq$}{1}%%
+{\{=}{$\preceq$}{1}%%
+{(all\^^M}{{}}{0 $(\forall$ \newline}%%
+{(all\ }{$(\forall$}{2}%%
+{\ all\^^M}{{}}{0 $\forall$ \newline}%%
+{\ all\ }{$\;\forall$}{2}%%
+{!!}{$\dagger$}{1}%%
+{\ always\^^M}{{}}{0 $\;\Box$ \newline}%%
+{\ always\ }{$\;\Box$}{2}%%
+{.>}{$\rangle$}{1}%%
+{`alpha}{$\alpha$}{1}%
+{`beta}{$\beta$}{1}%
+{`gamma}{$\gamma$}{1}%
+{`delta}{$\delta$}{1}%
+{`epsilon}{$\epsilon$}{1}%
+{`zeta}{$\zeta$}{1}%
+{`eta}{$\eta$}{1}%
+{`theta}{$\theta$}{1}%
+{`iota}{$\iota$}{1}%
+{`kappa}{$\kappa$}{1}%
+{`mu}{$\mu$}{1}%
+{`nu}{$\nu$}{1}%
+{`xi}{$\xi$}{1}%
+{`pi}{$\pi$}{1}%
+{`rho}{$\rho$}{1}%
+{`sigma}{$\sigma$}{1}%
+{`tau}{$\tau$}{1}%
+{`upsilon}{$\upsilon$}{1}%
+{`phi}{$\phi$}{1}%
+{`chi}{$\chi$}{1}%
+{`psi}{$\psi$}{1}%
+{`omega}{$\omega$}{1}%
+{`Gamma}{$\Gamma$}{1}%
+{`Delta}{$\Delta$}{1}%
+{`Theta}{$\Theta$}{1}%
+{`Lambda}{$\Lambda$}{1}%
+{`Xi}{$\Xi$}{1}%
+{`Pi}{$\Pi$}{1}%
+{`Sigma}{$\Sigma$}{1}%
+{`Upsilon}{$\Upsilon$}{1}%
+{`Phi}{$\Phi$}{1}%
+{`Psi}{$\Psi$}{1}%
+{`Omega}{$\Omega$}{1},%
+   sensitive=true,%
+   morecomment=[l]{--},%
+   morecomment=[s]{/*}{*/}%
+  }[keywords,comments]%

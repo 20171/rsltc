@@ -1,0 +1,37 @@
+   RSL Type Checker
+   Copyright (C) 1998 UNU/IIST
+
+The RSL type checker is free software:  you can use it; you can give
+it to others; you can also modify it.  
+
+In fact we are hoping that people will extend it.  It has bben
+considerably extended by UNU/IIST fellows since the original parser
+and type checker was written.  But there are still other things that
+might be done, like
+
+- some GUI front end support
+
+The tool is written using the Gentle Compiler Construction System.
+This is well documented and free for educational use.  Since it was
+intended for compiler writers it should be well suited to these tasks.
+It is easy to use - the syntax- and type-checker part of rsltc was
+originally written by one person in two months.  You define actions in
+terms of rather Prolog-like rules, and it is all written at a very
+high level.  Only small amounts of C code needed to be written to do
+input and output.
+
+Some notes on the top-level design of the type checker are included in
+design.ps.gz.
+
+We would like to coordinate such extensions and offer them to others.
+We will also try to provide assistance, and might be able to invite
+people from developing countries who are interested in doing them to
+UNU/IIST as Fellows.  So let us know if you are planning such an
+activity at raise@iist.unu.edu.
+
+For more information about UNU/IIST visit our home page
+
+  http://www.iist.unu.edu
+
+
+ 

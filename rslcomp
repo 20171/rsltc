@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# /usr/include/rsltc must be where the RSL library files are located;
+# If not, change it
+
+g++ -o $1 -DRSL_io -DRSL_pre -DRSL_boolalpha -I/usr/include/rsltc $1.cc

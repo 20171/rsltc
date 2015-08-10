@@ -1,0 +1,5 @@
+m4sources := $(addsuffix .sal,$(basename $(wildcard *.m4))) #$(addsuffix .sal,$(basename($(wildcard *.m4))))
+all : $(m4sources)
+
+$(m4sources): %.sal: %.m4
+	m4 $< > $@

@@ -1,0 +1,20 @@
+1.  Rebuilding gentle, reflex and lib requires gcc 3.4, which seems
+  hard to install.  Tried fixing for current gcc with #includes of
+  stdlib.h, stdio.h, string.h but resulting gentle crashes immediately
+  on any .g file.  So continuing with existing gentle etc, which means
+  building 32 bit version.
+
+2.  Can run existing 32-bit gentle on 64 bit installation after
+sudo apt-get install lib32z1 lib32ncurses5 lib32bz2-1.0
+
+3.  Needed to install bison (part of YACC) and flex
+
+4.  Changed src Makefile to use gcc -m32 instead of just gcc.  Needs
+to build for 32 bits because of compatibility with gentle's grts.o
+
+4.  Reported missing sys/cdefs.h.  So did 
+sudo apt-get install libc6-dev-i386
+
+5.  Warnings about malloc and sprintf but otherwise OK
+
+6.  used sudo dpkg -i rsltc_2.6.1-1_i386.deb to install, and it works.

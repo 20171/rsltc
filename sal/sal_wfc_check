@@ -1,0 +1,10 @@
+echo "sal-wfc $1"
+sal-wfc $1
+
+echo "sal-wfc $1_cc"
+sal-wfc $1_cc
+
+echo "sal-wfc $1_cc_simple"
+sal-wfc $1_cc_simple
+
+
