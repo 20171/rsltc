@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BUILD_TYPES="Release"
+BUILD_TYPE="Release"
 BASEDIR=`pwd`
 CMAKEOPTIONS="$@"
 BUILD_DIR=${BASEDIR}/build

@@ -33,7 +33,10 @@ It is *strongly* recommended to compile the code on Unix/Linux.
   folder. If you install Gentle in other location, you can tell `./configure` by
   running
 
-  `./configure -gentle=/path/to/your/gentle/installation`
+  ```sh
+  ./clean
+  ./configure -DGENTLE=/path/to/your/gentle/installation
+  ```
 
   If you want to clean up everything and re-configure
 

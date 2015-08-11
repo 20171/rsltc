@@ -24,7 +24,8 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D RSLTC_MAKE_DATE='\"${MAKE_DATE}\"' -D RSL
 ###############################################################
 # Gentle path
 ###############################################################
-set(GENTLE "/usr/share/gentle" CACHE STRING "Path to Gentle installation, default to /usr/share/gentle (-gentle)")
+set(GENTLE "/usr/share/gentle" CACHE STRING "Path to Gentle installation, default to /usr/share/gentle (-DGENTLE=/path/to/gentle)")
+MESSAGE(STATUS "Gentle location: ${GENTLE}")
 
 ###############################################################
 # Handling for other libraries and tools
