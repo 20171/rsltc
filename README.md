@@ -19,8 +19,8 @@ machine.
 
 - [Gentle](http://gentle.compilertools.net/)
 - [Cmake](http://www.cmake.org/)
-- Flex
-- Bison
+- [Flex](http://flex.sourceforge.net/)
+- [GNU Bison](http://www.gnu.org/software/bison/)
 - gcc
 - Automake
 
