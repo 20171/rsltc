@@ -39,7 +39,7 @@ add_subdirectory( UML2RSL )
 # Build installer targets
 ###############################################################
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    set(CMAKE_INSTALL_PREFIX "/opt/rsltc" CACHE PATH "Install path prefix." FORCE)
+    set(CMAKE_INSTALL_PREFIX "/user/share/rsltc" CACHE PATH "Install path prefix." FORCE)
 endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 MESSAGE(STATUS "Installation path: ${CMAKE_INSTALL_PREFIX}")
 
