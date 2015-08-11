@@ -2,3 +2,10 @@
 *.o
 .DS_Store
 *.sublime-*
+src/*.c
+src/*.l
+src/*.h
+src/*.lit
+src/*.tkn
+src/*.y
+src/rsltc

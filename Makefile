@@ -3,6 +3,10 @@ SHELL = /bin/sh
 srcdir = src
 top_srcdir = .
 
+ifdef GENTLE_DIR
+export GENTLE_DIR
+endif
+
 ifdef DEBIAN_BUILD_ROOT
 prefix = $(DEBIAN_BUILD_ROOT)/usr
 else

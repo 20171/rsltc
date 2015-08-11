@@ -17,7 +17,6 @@ fdr.c fdr_ast.c fdr_gen_ast.c fdr_gen_code.c ltl_trans_delta.c\
 ltl_out.c
 
 
-
 GENTLE_O = $(GENTLE_C:%.c=%.o)
 C_O = errmsg.o files.o idents.o strings.o ccgen.o main.o pos.o
 OBJECTS = $(GENTLE_O) $(GEN_TAB).o $(LEX_YY).o $(C_O) $(GRTS)

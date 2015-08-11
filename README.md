@@ -16,10 +16,19 @@ mainly located in the `src` folder.
 ## Dependencies
 - [Gentle](http://gentle.compilertools.net/)
 - gcc
+- Automake
 
-## Compilation
-Simply run `make` to compile the source. This results in an executable `rsltc`
-in `src` folder.
+## Compilation & Installation
+It is *strongly* recommended to compile the code on Unix/Linux.
+
+- **Compile**: To compile the source, simply run `make`. This results in an
+  executable `rsltc` in `src` folder.
+
+- **Clean**: run `make clean` to clean up the output files.
+
+- **Install**: run `sudo make install` to install `rsltc` to default folder.
+
+- **Uninstall**: run `sudo make uninstall` to uninstall `rsltc`. 
 
 ## Contribute
 ### Students: 
