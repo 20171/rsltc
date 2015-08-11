@@ -14,6 +14,8 @@ implemented in [Gentle](http://gentle.compilertools.net/). The implementation is
 mainly located in the `src` folder.
 
 ## Dependencies
+Download and install the following in your computer.
+
 - [Gentle](http://gentle.compilertools.net/)
 - gcc
 - Automake
@@ -23,6 +25,12 @@ It is *strongly* recommended to compile the code on Unix/Linux.
 
 - **Compile**: To compile the source, simply run `make`. This results in an
   executable `rsltc` in `src` folder.
+
+  By default, the compiler tries to find Gentle's files in `/usr/share/gentle`
+  folder. If you install Gentle in other location, you can tell `make` by
+  running
+
+  `make GENTLE_DIR=/the/path/to/your/gentle/installation`
 
 - **Clean**: run `make clean` to clean up the output files.
 
