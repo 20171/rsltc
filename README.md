@@ -14,29 +14,69 @@ implemented in [Gentle](http://gentle.compilertools.net/). The implementation is
 mainly located in the `src` folder.
 
 ## Dependencies
-Download and install the following in your computer.
+Make sure that you have the following programs installed and working on your
+machine.
 
 - [Gentle](http://gentle.compilertools.net/)
+- [Cmake](http://www.cmake.org/)
+- Flex
+- Bison
 - gcc
 - Automake
 
 ## Compilation & Installation
 It is *strongly* recommended to compile the code on Unix/Linux.
 
-- **Compile**: To compile the source, simply run `make`. This results in an
-  executable `rsltc` in `src` folder.
-
-  By default, the compiler tries to find Gentle's files in `/usr/share/gentle`
-  folder. If you install Gentle in other location, you can tell `make` by
+- **Configure**: run `./configure` to configure the build folder using CMake.
+  This creates folder `build` containing all necessary files for compilation. By
+  default, the compiler tries to find Gentle's files in `/usr/share/gentle`
+  folder. If you install Gentle in other location, you can tell `./configure` by
   running
 
-  `make GENTLE_DIR=/the/path/to/your/gentle/installation`
+  `./configure -gentle=/path/to/your/gentle/installation`
 
-- **Clean**: run `make clean` to clean up the output files.
+  If you want to clean up everything and re-configure
 
-- **Install**: run `sudo make install` to install `rsltc` to default folder.
+  ```sh
+  ./clean
+  ./configure
+  ```
 
-- **Uninstall**: run `sudo make uninstall` to uninstall `rsltc`. 
+- **Compile**: 
+
+  ```sh
+  cd build
+  make
+  ```
+
+- **Clean**: 
+
+  ```sh
+  cd build
+  make clean
+  ```
+
+- **Install**:
+
+  ```sh
+  cd build
+  sudo make install
+  ```
+
+- **Make Debian package**: 
+
+  ```sh
+  cd build
+  cpack
+  ```
+
+- **Uninstall**:
+
+  ```sh
+  cd build
+  sudo make uninstall
+  ```
+
 
 ## Contribute
 ### Students: 

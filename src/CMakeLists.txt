@@ -6,8 +6,8 @@ FOREACH(tfileName ${T_FILES})
 
     # Custom command to do the processing
     ADD_CUSTOM_COMMAND(OUTPUT "${outfile}"
-        COMMAND cp -v "${tfileName}" "${outfile}"
-        COMMENT "Copy token and block files"
+        COMMAND cp "${tfileName}" "${outfile}"
+        COMMENT "Copy ${tfileName} to build folder"
         DEPENDS "${tfileName}"
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         VERBATIM)
@@ -18,8 +18,6 @@ ENDFOREACH(tfileName)
 
 FILE(GLOB GENTLE_SOURCES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/*.g")
 
-set(GENTLE_DIR "/usr/share/gentle")
-
 set(RSLTC_SOURCES
     ccgen.c
     errmsg.c
@@ -28,10 +26,11 @@ set(RSLTC_SOURCES
     main.c
     pos.c
     strings.c
-    gen.h
-    ${GENTLE_DIR}/gentle/grts.o
+    ${GENTLE}/gentle/grts.o
 )
 
+# we will handle grammar.g separately, as it generates gen.* files
+LIST(REMOVE_ITEM GENTLE_SOURCES grammar.g)
 FOREACH(gfileName ${GENTLE_SOURCES})
     # MESSAGE(STATUS "Process file: ${gfileName}")
     # Generate output file name
@@ -44,9 +43,9 @@ FOREACH(gfileName ${GENTLE_SOURCES})
 
     # Custom command to do the processing
     ADD_CUSTOM_COMMAND(OUTPUT "${outfile}"
-        COMMAND ${GENTLE_DIR}/gentle/gentle "${gfileName}"
-        COMMAND mv -v "${cfileName}" "${outfile}"
-        COMMENT "Generate Gentle files"
+        COMMAND ${GENTLE}/gentle/gentle "${gfileName}"
+        COMMAND mv "${cfileName}" "${outfile}"
+        COMMENT "Generate C source files from ${gfileName}"
         DEPENDS "${gfileName}"
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         VERBATIM)
@@ -64,20 +63,23 @@ ADD_CUSTOM_COMMAND(OUTPUT
     "${CMAKE_CURRENT_BINARY_DIR}/gen.lit"
     "${CMAKE_CURRENT_BINARY_DIR}/gen.h"
     "${CMAKE_CURRENT_BINARY_DIR}/gen.y"
-    COMMAND ${GENTLE_DIR}/gentle/gentle "grammar.g"
-    COMMAND mv -v "gen.tkn" "${CMAKE_CURRENT_BINARY_DIR}/gen.tkn"
-    COMMAND mv -v "gen.lit" "${CMAKE_CURRENT_BINARY_DIR}/gen.lit"
-    COMMAND mv -v "gen.h" "${CMAKE_CURRENT_BINARY_DIR}/gen.h"
-    COMMAND mv -v "gen.y" "${CMAKE_CURRENT_BINARY_DIR}/gen.y"
-    COMMENT "Generate gen.* files"
+    "${CMAKE_CURRENT_BINARY_DIR}/grammar.c"
+    COMMAND ${GENTLE}/gentle/gentle "grammar.g"
+    COMMAND mv "gen.tkn" "${CMAKE_CURRENT_BINARY_DIR}/gen.tkn"
+    COMMAND mv "gen.lit" "${CMAKE_CURRENT_BINARY_DIR}/gen.lit"
+    COMMAND mv "gen.h" "${CMAKE_CURRENT_BINARY_DIR}/gen.h"
+    COMMAND mv "gen.y" "${CMAKE_CURRENT_BINARY_DIR}/gen.y"
+    COMMAND mv "grammar.c" "${CMAKE_CURRENT_BINARY_DIR}/grammar.c"
+    COMMENT "Generate gen.* and grammar.c files"
     DEPENDS "grammar.g"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     VERBATIM)
+SET(RSLTC_SOURCES ${RSLTC_SOURCES} "${CMAKE_CURRENT_BINARY_DIR}/grammar.c")
 
 ADD_CUSTOM_COMMAND(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/gen.l"
-        COMMAND ${GENTLE_DIR}/reflex/reflex
+        COMMAND ${GENTLE}/reflex/reflex
         DEPENDS ${TOKENS} ${RSLTC_SOURCES}
-        COMMENT "Generate Reflex files"
+        COMMENT "Generate gen.l by Gentle's reflex"
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         VERBATIM)
 
@@ -85,11 +87,11 @@ BISON_TARGET(rsltc_B "${CMAKE_CURRENT_BINARY_DIR}/gen.y" ${CMAKE_CURRENT_BINARY_
 FLEX_TARGET(rsltc_F "${CMAKE_CURRENT_BINARY_DIR}/gen.l" ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c)
 ADD_FLEX_BISON_DEPENDENCY( rsltc_F rsltc_B )
 
-add_executable(rsltc 
-    ${GENTLE_SOURCES}
+add_executable(rsltc
     ${RSLTC_SOURCES}
     ${BISON_rsltc_B_OUTPUTS}
     ${FLEX_rsltc_F_OUTPUTS}
     )
 
-INSTALL(FILES rsltc DESTINATION bin)
+INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/rsltc" DESTINATION bin
+        PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ)

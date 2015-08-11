@@ -1,0 +1,15 @@
+#!/bin/bash
+
+BUILD_TYPES="Release"
+BASEDIR=`pwd`
+CMAKEOPTIONS="$@"
+BUILD_DIR=${BASEDIR}/build
+
+echo "Configuring ${BUILD_TYPE} build in ${BUILD_DIR}"
+
+mkdir -p ${BUILD_DIR}
+cd ${BUILD_DIR}
+cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ${CMAKEOPTIONS} ..
+
+echo -e "\nGeneration of build files completed."
+echo "-- ${BUILD_TYPE} in ${BUILD_DIR}"

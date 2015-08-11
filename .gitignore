@@ -9,4 +9,4 @@ src/*.lit
 src/*.tkn
 src/*.y
 src/rsltc
-build.*
+build/
