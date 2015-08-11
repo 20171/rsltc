@@ -2,7 +2,8 @@
   FILE * next;
 
   BEGIN (INITIAL);
-  next = (FILE *) NextFile ();
+  // next = (FILE *) NextFile ();
+  next = (void*)(intptr_t) NextFile ();
   if (next == (FILE *) 0) {
     yyterminate ();
   }

@@ -479,8 +479,9 @@ void Remove_Prime(char *string, char **ref_string) {
   char temp[len];
   memcpy(temp, &string[0], len-1);
   temp[len-1] = '\0';
-  *ref_string = (char *) malloc (len);
-  sprintf(*ref_string, temp);
+  // *ref_string = (char *) malloc (len);
+  *ref_string = temp;
+  // sprintf(*ref_string, temp);
 }
 
 

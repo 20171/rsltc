@@ -48,10 +48,10 @@ $(GEN_TAB).c: grammar.c
 	$(YACC) gen.y
 
 $(BLOCKS):
-	ln -s comments.b COMMENTS.b
-	ln -s lexdef.b LEXDEF.b
-	ln -s lexfunc.b LEXFUNC.b
-	ln -s litblock.b LITBLOCK.b
+	# ln -s comments.b COMMENTS.b
+	# ln -s lexdef.b LEXDEF.b
+	# ln -s lexfunc.b LEXFUNC.b
+	# ln -s litblock.b LITBLOCK.b
 
 clean:
 	$(RM_CMD) *.o

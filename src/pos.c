@@ -6,6 +6,7 @@ raise@iist.unu.edu
 */
 
 #include <stdio.h>
+#include <string.h>
 #include "pos.h"
 #include "files.h"
 
@@ -185,9 +186,9 @@ void PosDecrypt (long pos, char **res, char **l, char **c )
   *res = (char *) malloc (strlen(filename) + 5);
   sprintf(*res, "%s%s", filename, RSL_SUFFIX); 
   *l = (char *) malloc (10);
-  sprintf(*l, "%d", line);
+  sprintf(*l, "%ld", line);
   *c = (char *) malloc (10);
-  sprintf(*c, "%d", column);
+  sprintf(*c, "%ld", column);
 }
 
 /*--------------------------------------------------------------------*/
