@@ -37,7 +37,7 @@
      OpenCcFile WriteCcString WriteCcId WriteCcText WriteCcChar CloseCcFile
      WriteHCcString
      OpenSMLFile CloseOutputFile WriteFile WritelnFile 
-     OpenPVSFile OpenSALFile OpenM4File OpenFDRFile OpenLTLFile
+     OpenPVSFile OpenSALFile OpenM4File OpenFDRFile OpenLTLFile OpenRTTFile
      WriteFFile WriteF2File WriteF3File WriteF4File WriteF5File
      WriteFFileInt SetFileIndentSpace IndentFile UnindentFile 
      SetIndentHere PushSetIndentHere PushIndent PopIndent
@@ -68,7 +68,7 @@
    PrintVersion
    IsTimed  CcWanted AllCcWanted PpWanted DepsWanted GraphWanted
    CPPWanted VisualCPP JavaWanted SMLWanted PVSWanted PccWanted
-   SQLWanted SALWanted FDRWanted
+   SQLWanted SALWanted FDRWanted RTTWanted
 
 'use' ast
 
@@ -159,6 +159,7 @@
 'action' OpenM4File(IDENT -> STRING)
 'action' OpenFDRFile(IDENT -> STRING)
 'action' OpenLTLFile(IDENT -> STRING)
+'action' OpenRTTFile(IDENT -> STRING)
 'action' CloseOutputFile
 'action' WriteFile(STRING)
 'action' WritelnFile(INT)
@@ -256,4 +257,5 @@
 'condition' SQLWanted
 'condition' SALWanted
 'condition' FDRWanted
+'condition' RTTWanted
 'end'

@@ -32,6 +32,7 @@ raise@iist.unu.edu
 #define M4_SUFFIX ".m4"
 #define FDR_SUFFIX ".fdr2"
 #define LTL_SUFFIX ".ltl"
+#define RTT_SUFFIX ".rtt"
 
 #ifndef PATH_MAX
 #define PATH_MAX _MAX_PATH
@@ -107,6 +108,8 @@ void OpenPVSFile(IDENT, char **);
 void OpenFDRFile(IDENT, char **);
 
 void OpenLTLFile(IDENT, char **);
+
+void OpenRTTFile(IDENT, char **);
 
 void OpenOutputFile(IDENT, char *, char *, char **);
 void WriteFile(char *str);

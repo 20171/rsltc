@@ -15,7 +15,7 @@
 'module' grammar
 
 'use' ast ext env print types values objects cc pp cpp sml
-      pvs pvs_aux sal sal_global_vars fdr
+      pvs pvs_aux sal sal_global_vars fdr rtt
 
 ---------------------------------------------------------------
 -- Start
@@ -37,6 +37,10 @@
       DepsWanted()
       Print_module_deps(M, G)
     ||
+      [|
+        RTTWanted()
+        gen_rtt_ascii(M)
+      |]
       [|
 	SMLWanted()
 	Init_SML_vars

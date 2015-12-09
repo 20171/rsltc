@@ -147,6 +147,13 @@ int FDRWanted (void)
   return (fdrwanted == 1);
 }
 
+int rttwanted = 0;
+
+int RTTWanted (void)
+{
+  return (rttwanted == 1);
+}
+
 int main (int argc, char *argv[])
 {
   int n;
@@ -239,6 +246,10 @@ int main (int argc, char *argv[])
 	smlwanted = 1;
 	n++;
 	break;
+      case 'r' :
+        rttwanted = 1;
+        n++;
+        break;
       case 's' :
 	if (argv[n][2] == 'a') { /* -sa option (sal) */
 	  salwanted = 1;

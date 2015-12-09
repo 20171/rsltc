@@ -1109,6 +1109,8 @@ void OpenM4File(IDENT Id, char **file) {OpenOutputFile(Id, M4_SUFFIX, "m4", file
 void OpenFDRFile(IDENT Id, char **file) {OpenOutputFile(Id, FDR_SUFFIX, "FDR", file);}
 
 void OpenLTLFile(IDENT Id, char **file) {OpenOutputFile(Id, LTL_SUFFIX, "LTL", file);}
+
+void OpenRTTFile(IDENT Id, char **file) {OpenOutputFile(Id, RTT_SUFFIX, "RTT", file);}
 /* ---------------------------------------------------------------- */
 
 void OpenGraphFile(IDENT Id, char **file) {OpenOutputFile(Id, VCG_SUFFIX, "graph", file);}

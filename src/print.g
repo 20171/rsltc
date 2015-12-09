@@ -83,7 +83,6 @@ Print_type_def -- TODO: Debug delete
   Find_module
   Op_to_print_string
   Print_alphabet
-  
 
 -------------------------------------------------
 -- Modules
