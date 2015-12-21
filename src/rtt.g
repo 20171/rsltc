@@ -26,15 +26,16 @@
 'action' gen_class(CLASS)
 
   'rule' gen_class(basic(Ds)): 
+          check_enums_for_duplicates(Ds,nil)
           WriteFile("TYPES") 
           gen_types(Ds) 
-          WriteFile("\nTYPES_END\nVAR_DECL") 
+          WriteFile("\nTYPES_END\n\nVAR_DECL") 
           gen_var_decls(Ds) 
-          WriteFile("\nVAR_DECL_END\nINIT_VAL") 
+          WriteFile("\nVAR_DECL_END\n\nINIT_VAL") 
           gen_init_values(Ds) 
-          WriteFile("\nINIT_VAL_END\nTRANS_REL") 
+          WriteFile("\nINIT_VAL_END\n\nTRANS_REL") 
           gen_transition_relations(Ds) 
-          WriteFile("\nTRANS_REL_END\nPROP_SPEC") 
+          WriteFile("\nTRANS_REL_END\n\nPROP_SPEC") 
           gen_property_specifications(Ds) 
           WriteFile("\nPROP_SPEC_END")
 
@@ -42,7 +43,8 @@
 'action' gen_types(DECLS)
 
   'rule' gen_types(nil):
-  'rule' gen_types(list(type_decl(_,TDs),Ds)): gen_type_declarations(TDs) gen_types_decls(Ds)
+  'rule' gen_types(list(type_decl(_,TDs),Ds)): gen_type_declarations(TDs) gen_types(Ds)
+  'rule' gen_types(list(D,Ds)): gen_types(Ds)
 
 
 'action' gen_var_decls(DECLS)
@@ -75,6 +77,35 @@
   'rule' gen_property_specifications(list(D,Ds)): gen_property_specifications(Ds)
 
 
+'action' gen_type_declarations(TYPE_DEFS)
+
+  'rule' gen_type_declarations(nil):
+  'rule' gen_type_declarations(list(D,Ds)): gen_type_declaration(D) gen_type_declarations(Ds)
+
+
+'action' gen_type_declaration(TYPE_DEF)
+
+  'rule' gen_type_declaration(variant(_,ID,Vs)): WriteFile("\n") id_to_string(ID->S) WriteFile(S) WriteFile(" == ") gen_variants(Vs)
+  'rule' gen_type_declaration(abbrev(_,ID,TE)): WriteFile("\n") id_to_string(ID->S) WriteFile(S) WriteFile(" == ") gen_type_expr(TE)
+
+
+'action' gen_variants(VARIANTS)
+
+  'rule' gen_variants(nil):
+  'rule' gen_variants(list(V,nil)): gen_variant(V)
+  'rule' gen_variants(list(V,Vs)): gen_variant(V) WriteFile(" | ") gen_variants(Vs)
+
+
+'action' gen_variant(VARIANT)
+
+  'rule' gen_variant(record(_,C,_)): gen_constructor(C)
+
+
+'action' gen_constructor(CONSTRUCTOR)
+
+  'rule' gen_constructor(constructor(_,IOO)): gen_id_or_op(IOO)
+
+
 'action' gen_axiom_declarations(AXIOM_DEFS)
 
   'rule' gen_axiom_declarations(nil):
@@ -96,6 +127,37 @@
 
   'rule' gen_value_declaration(exp_val(_,T,E)): WriteFile("\nconst ") gen_typing(T) WriteFile(" == ") gen_value_expr(E)
   'rule' gen_value_declaration(typing(_,T)): WriteFile("\n") gen_typing(T)
+  'rule' gen_value_declaration(exp_fun(P,single(P2,B,TE),FFA,VE,_,_,_)): WriteFile("\n") gen_return_type(TE) WriteFile(" ") gen_binding(B) WriteFile(" (") gen_function_parameters_defs(TE,FFA) WriteFile(") {return ") gen_value_expr(VE) WriteFile("}")
+
+
+'action' gen_return_type(TYPE_EXPR)
+
+  'rule' gen_return_type(function(_,_,result(_,TE))): gen_type_expr(TE)
+
+
+'action' gen_function_parameters_defs(TYPE_EXPR,FORMAL_FUNCTION_APPLICATION)
+
+  'rule' gen_function_parameters_defs(function(product(P),_,_),form_appl(_,_,list(form_parm(_,Bs),nil))): get_parameters_as_list(Bs,nil->IDs) gen_function_parameter_defs(P,IDs)
+  'rule' gen_function_parameters_defs(function(TE,_,_),form_appl(_,_,list(form_parm(_,list(B,nil)),nil))): gen_type_expr(TE) WriteFile(" ") gen_binding(B)
+
+
+'action' gen_function_parameter_defs(PRODUCT_TYPE,IDENTS)
+
+  'rule' gen_function_parameter_defs(nil,nil):
+  'rule' gen_function_parameter_defs(list(TE,nil),list(ID,nil)): gen_type_expr(TE) WriteFile(" ") id_to_string(ID->S) WriteFile(S)
+  'rule' gen_function_parameter_defs(list(TE,P),list(ID,IDs)): gen_type_expr(TE) WriteFile(" ") id_to_string(ID->S) WriteFile(S) WriteFile(",") gen_function_parameter_defs(P,IDs)
+
+
+'action' get_parameters_as_list(BINDINGS,IDENTS->IDENTS)
+
+  'rule' get_parameters_as_list(nil,IDs->RevIDs): reverse_ids(IDs,nil->RevIDs)  --the otherwise the idents are in reverse order compared to their types
+  'rule' get_parameters_as_list(list(single(_,id_op(ID)),Bs),IDs->ID3s): where(IDENTS'list(ID,IDs)->ID2s) get_parameters_as_list(Bs,ID2s->ID3s)
+
+
+'action' reverse_ids(IDENTS,IDENTS->IDENTS)
+
+  'rule' reverse_ids(nil,IDs->IDs):
+  'rule' reverse_ids(list(ID,IDs),IDs2->IDs4): where(IDENTS'list(ID,IDs2)->IDs3) reverse_ids(IDs,IDs3->IDs4)
 
 
 'action' gen_typing(TYPING)
@@ -161,8 +223,8 @@
 
 'action' gen_transition_relation(TRANSITION_OPERATOR,IDENTS)
 
-  'rule' gen_transition_relation(equal_priority(L,R,_),Is): WriteFile("\n(") gen_transition_relation(L,Is) WriteFile(") ||\n(") gen_transition_relation(R,Is) WriteFile(")")
-  'rule' gen_transition_relation(guarded_command(C,_),Is): gen_transition(C,Is)
+  'rule' gen_transition_relation(equal_priority(L,R,_),Is): gen_transition_relation(L,Is) WriteFile(" ||") gen_transition_relation(R,Is)
+  'rule' gen_transition_relation(guarded_command(C,_),Is): WriteFile("\n(") gen_transition(C,Is) WriteFile(")")
 
 
 'action' gen_transition(GUARDED_COMMAND,IDENTS)
@@ -207,8 +269,13 @@
   'rule' gen_value_expr(val_infix(_,Left,div,Right)): gen_value_expr(Left) WriteFile(" / ") gen_value_expr(Right)
   'rule' gen_value_expr(literal_expr(_,VL)): gen_value_literal(VL)
   'rule' gen_value_expr(named_val(_,N)): gen_name(N)
-  'rule' gen_value_expr(application(_,VE,FP)): gen_value_expr(VE) WriteFile("(") gen_function_parameters(FP) WriteFile(")")
-  'rule' gen_value_expr(case_expr(_,VE,_,Bs)): get_patterns_from_branches(Bs,nil->Ps) gen_case_expr(VE,Bs,Ps)
+  'rule' gen_value_expr(application(_,VE,FP)): 
+         (|
+            is_ltl_pathformula(VE) gen_pathformula(VE,FP)
+         ||
+            gen_value_expr(VE) WriteFile("(") gen_function_parameters(FP) WriteFile(")")
+         |)
+  'rule' gen_value_expr(case_expr(P,VE,P2,Bs)): convert_case_to_if(case_expr(P,VE,P2,Bs)->IF) gen_value_expr(IF) --get_patterns_from_branches(Bs,nil->Ps) gen_case_expr(VE,Bs,Ps)
   'rule' gen_value_expr(if_expr(_,G,T,_,EIs,E)): gen_if(G,T,EIs,E)
   'rule' gen_value_expr(equivalence(_,Left,Right,_)): gen_value_expr(Left) WriteFile(" == ") gen_value_expr(Right)
   'rule' gen_value_expr(bracket(_,VE)): WriteFile("(") gen_value_expr(VE) WriteFile(")")
@@ -306,6 +373,35 @@
   'rule' gen_elsif(elsif(_,G,T,_)): WriteFile(" || (") gen_value_expr(G) WriteFile(" && ") gen_value_expr(T) WriteFile(")")
 
 
+'action' convert_case_to_if(VALUE_EXPR->VALUE_EXPR)
+
+  'rule' convert_case_to_if(case_expr(P,VE,P2,Bs)->if_expr(P,G,T,region(P,P2),EIs,E)): get_guard(VE,Bs->G) get_then(Bs->Bs2,T) get_elsif(VE,Bs2,nil->EIs) get_else(Bs2->E)
+
+
+'action' get_guard(VALUE_EXPR,CASE_BRANCHES->VALUE_EXPR)
+
+  'rule' get_guard(VE,list(case(P,literal_pattern(_,VL),_,_),_)->val_infix(P,VE,eq,literal_expr(P,VL))):
+  'rule' get_guard(VE,list(case(P,name_pattern(_,N),_,_),_)->val_infix(P,VE,eq,named_val(P,N))):
+
+
+'action' get_then(CASE_BRANCHES->CASE_BRANCHES,VALUE_EXPR)
+
+  'rule' get_then(list(case(_,_,VE,_),Bs)->Bs,VE):
+
+
+'action' get_elsif(VALUE_EXPR,CASE_BRANCHES,ELSIF_BRANCHES->ELSIF_BRANCHES)
+
+  'rule' get_elsif(VE,list(case(P,literal_pattern(P2,VL),VE2,_),Bs),EIs->EIs3): where(ELSIF_BRANCHES'list(elsif(P,val_infix(P,VE,eq,literal_expr(P2,VL)),VE2,P),EIs)->EIs2) get_elsif(VE,Bs,EIs2->EIs3)
+  'rule' get_elsif(VE,list(case(P,name_pattern(P2,N),VE2,_),Bs),EIs->EIs3): where(ELSIF_BRANCHES'list(elsif(P,val_infix(P,VE,eq,named_val(P2,N)),VE2,P),EIs)->EIs2) get_elsif(VE,Bs,EIs2->EIs3)
+  'rule' get_elsif(_,list(case(P,wildcard_pattern(_),_,_),_),EIs->EIs): 
+
+
+'action' get_else(CASE_BRANCHES->ELSE_BRANCH)
+
+  'rule' get_else(list(case(P,wildcard_pattern(_),VE,_),_)->else(P,VE)):
+  'rule' get_else(list(B,Bs)->E): get_else(Bs->E)
+
+
 'action' gen_case_expr(VALUE_EXPR,CASE_BRANCHES,PATTERNS)
 
   'rule' gen_case_expr(VE,nil,Ps):
@@ -353,6 +449,16 @@
   'rule' gen_properties(list(PD,PDs)): gen_property(PD) gen_properties(PDs)
 
 
+'action' gen_pathformula(VALUE_EXPR,ACTUAL_FUNCTION_PARAMETERS)
+
+  'rule' gen_pathformula(named_val(_,name(_,id_op(ID))),FP): 
+         id_to_string(ID->S) 
+         (| eq(S,"G") WriteFile("Globally")
+         || eq(S,"F") WriteFile("Finally")
+         || eq(S,"X") WriteFile("Next") |)
+         WriteFile("[") gen_function_parameters(FP) WriteFile("]")
+
+
 'action' gen_property(PROPERTY_DECL)
 
   'rule' gen_property(property_def(_,_,_,P)): WriteFile("\n") gen_value_expr(P)
@@ -374,6 +480,14 @@
   'rule' gen_type_expr(bool): WriteFile("bool")
   'rule' gen_type_expr(nat): WriteFile("nat")
   'rule' gen_type_expr(real): WriteFile("real")
+  'rule' gen_type_expr(subtype(T,R)): gen_typing(T) WriteFile(" where ") gen_restriction(R)
+  'rule' gen_type_expr(named_type(N)): gen_name(N)
+
+
+'action' gen_restriction(RESTRICTION)
+
+  'rule' gen_restriction(nil):
+  'rule' gen_restriction(restriction(_,VE)): gen_value_expr(VE)
 
 
 'action' gen_function_parameters(ACTUAL_FUNCTION_PARAMETERS)
@@ -400,6 +514,33 @@
          gen_remaining_variables(Cs,Is)
 
 
+'action' check_enums_for_duplicates(DECLS,IDENTS)
+
+  'rule' check_enums_for_duplicates(nil,_):
+  'rule' check_enums_for_duplicates(list(type_decl(_,TDs),Ds),IDs): get_enum_ids_from_type_defs(TDs,nil->IDs2) append_ident_lists(IDs,IDs2->IDs3) check_enums_for_duplicates(Ds,IDs3) 
+  'rule' check_enums_for_duplicates(list(D,Ds),IDs): check_enums_for_duplicates(Ds,IDs)
+
+
+'action' get_enum_ids_from_type_defs(TYPE_DEFS,IDENTS->IDENTS)
+
+  'rule' get_enum_ids_from_type_defs(nil,IDs->IDs):
+  'rule' get_enum_ids_from_type_defs(list(variant(_,_,Vs),TDs),IDs->IDs4): get_ids_from_variants(Vs,nil->IDs2) append_ident_lists(IDs,IDs2->IDs3) get_enum_ids_from_type_defs(TDs,IDs3->IDs4)
+  'rule' get_enum_ids_from_type_defs(list(TD,TDs),IDs->IDs2): get_enum_ids_from_type_defs(TDs,IDs->IDs2)
+
+
+'action' get_ids_from_variants(VARIANTS,IDENTS->IDENTS)
+
+  'rule' get_ids_from_variants(nil,IDs->IDs):
+  'rule' get_ids_from_variants(list(record(_,constructor(_,id_op(ID)),_),Vs),IDs->IDs3): check_id_for_duplicate(ID,IDs) where(IDENTS'list(ID,IDs)->IDs2) get_ids_from_variants(Vs,IDs2->IDs3)
+  'rule' get_ids_from_variants(list(V,Vs),IDs->IDs2): get_ids_from_variants(Vs,IDs->IDs2)
+
+
+'action' append_ident_lists(IDENTS,IDENTS->IDENTS)
+
+  'rule' append_ident_lists(nil,IDs->IDs):
+  'rule' append_ident_lists(list(ID,IDs),IDs2->IDs4): where(IDENTS'list(ID,IDs2)->IDs3) append_ident_lists(IDs,IDs3->IDs4)
+
+
 'condition' is_part_of_commands(STRING,COMMANDS)
 
   'rule' is_part_of_commands(S,nil):
@@ -418,6 +559,17 @@
   'rule' has_if_statement(application(_,VE,_)): has_if_statement(VE)
   'rule' has_if_statement(case_expr(_,VE,_,_)): has_if_statement(VE)         ------ CHECK CASE-BRANCHES FOR IF-STATEMENTS ------
   'rule' has_if_statement(equivalence(_,Left,Right,_)): (| has_if_statement(Left) || has_if_statement(Right) |)
+
+
+'condition' is_ltl_pathformula(VALUE_EXPR)
+
+  'rule' is_ltl_pathformula(named_val(_,name(_,id_op(ID)))): id_to_string(ID->S) (| eq(S,"G") || eq(S,"F") || eq(S,"X") |)
+
+
+'condition' check_id_for_duplicate(IDENT,IDENTS)
+
+  'rule' check_id_for_duplicate(_,nil):
+  'rule' check_id_for_duplicate(ID,list(ID2,IDs)): (| ne(ID,ID2) check_id_for_duplicate(ID,IDs) || ErrorUsage("Error: enum is used more than once") |)
 
 
 'type' CONTROLKEY
