@@ -685,17 +685,37 @@
 
 'action' gen_pathformula(VALUE_EXPR, ACTUAL_FUNCTION_PARAMETERS)
 
-  'rule' gen_pathformula(named_val(_, name(_, id_op(ID))), FP): 
+  'rule' gen_pathformula(named_val(_, name(_, id_op(ID))), FPs): 
           id_to_string(ID -> S) 
-          (| eq(S, "G")
-             WriteFile("Globally")
-          ||  eq(S, "F")
-             WriteFile("Finally")
-          || eq(S, "X")
-             WriteFile("Next") |)
+          (| eq(S, "U")
+             where(FPs->list(FP,_))
+             gen_ltl_until(FP)
+          || 
+            (| eq(S, "G")
+               WriteFile("Globally")
+            || eq(S, "F")
+               WriteFile("Finally")
+            || eq(S, "X")
+               WriteFile("Next") 
+            |)
+            WriteFile("[")
+            gen_function_parameters(FPs)
+            WriteFile("]") 
+          |)
+
+'action' gen_ltl_until(ACTUAL_FUNCTION_PARAMETER)
+
+  'rule' gen_ltl_until(fun_arg(P, list(VE,nil))):
+          WriteFile("Until")
           WriteFile("[")
-          gen_function_parameters(FP)
-          WriteFile("]")
+          gen_value_expr(VE)
+          WriteFile("]") 
+
+  'rule' gen_ltl_until(fun_arg(P, list(VE,VEs))):
+          WriteFile("[")
+          gen_value_expr(VE)
+          WriteFile("]") 
+          gen_ltl_until(fun_arg(P, VEs))
 
 
 'action' gen_property(PROPERTY_DECL)
@@ -878,7 +898,8 @@
           id_to_string(ID -> S) 
           (| eq(S, "G") 
           || eq(S, "F") 
-          || eq(S, "X") |)
+          || eq(S, "X")
+          || eq(S, "U") |)
 
 
 'condition' check_id_for_duplicate(IDENT, IDENTS)
